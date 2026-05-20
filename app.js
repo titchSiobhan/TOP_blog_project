@@ -7,6 +7,7 @@ import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import authRouter from './routes/authRouter.js';
+import blogRouter from './routes/blogRouter.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000
@@ -14,7 +15,7 @@ app.use(express.json());
 
 
 
-app.get('/', (req, res) => res.send(':)'))
+// app.get('/', (req, res) => res.send(':)'))
 
 app.get('/api', (req, res) => {
     res.json({
@@ -22,6 +23,7 @@ app.get('/api', (req, res) => {
     })
 })
 app.use('/', authRouter)
+app.use('/', blogRouter)
 app.post('/api/post',  (req, res) => {
     jwt.verify(req.token, 'secretKey', { expiresIn: '1h' }, (err, authData) => {
         if(err) {
@@ -39,23 +41,23 @@ app.post('/api/post',  (req, res) => {
     
 })
 
-app.post('/api/login',  (req, res) => {
-    //user
-    const user = {
-        id: 1,
-        username:'Siobhan',
-        email: 'siobhan@email.com'
-    }
-    jwt.sign({user}, 'secretKey', { expiresIn: '1h' }, function(err, token) {
-        if (err) {
-            return res.status(500).json({ error: 'Token generation failed' });
-        }
+// app.post('/api/login',  (req, res) => {
+//     //user
+//     const user = {
+//         id: 1,
+//         username:'Siobhan',
+//         email: 'siobhan@email.com'
+//     }
+//     jwt.sign({user}, 'secretKey', { expiresIn: '1h' }, function(err, token) {
+//         if (err) {
+//             return res.status(500).json({ error: 'Token generation failed' });
+//         }
 
-        res.json({ token });
+//         res.json({ token });
 
-        console.log(token)
-    })
-})
+//         console.log(token)
+//     })
+// })
 
 
 app.listen(PORT, (error) => {
