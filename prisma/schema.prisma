@@ -28,7 +28,7 @@ comments  Comments[]
 
 model BlogPost {
   id  String  @id 
-  title  String  @unique
+  title  String  
   createdAt  DateTime  @default(now())
   blogPost  String
   author  User  @relation(fields: [authorId], references: [id])

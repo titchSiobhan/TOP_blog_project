@@ -35,7 +35,11 @@ async function signUp(req, res) {
             password: hashedPassword
         }
     })
-    console.log('user created')
+    console.log('user created');
+    return res.json({
+        message: 'User created',
+        user
+    })
 }
 
 async function login(req, res) {
