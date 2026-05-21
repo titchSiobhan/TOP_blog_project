@@ -33,8 +33,7 @@ model BlogPost {
   blogPost  String
   author  User  @relation(fields: [authorId], references: [id])
   authorId  String 
-  comments  Comments?  @relation(fields: [commentId], references: [id])
-  commentId   String?
+  comments   Comments[]
   isPublished  Boolean  @default(false)
 }
 
@@ -44,5 +43,6 @@ model Comments {
   createdAt  DateTime  @default(now())
   author  User  @relation(fields: [authorId], references: [id])
   authorId  String
-  BlogPost  BlogPost[]
+  blogPost  BlogPost @relation(fields: [postId], references: [id])
+  postId   String
 }

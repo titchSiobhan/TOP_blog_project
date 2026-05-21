@@ -1,7 +1,8 @@
 import { v4 as uuid4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma.js';
-import verifyToken from '../middleware/verify.js';
+import { connect } from 'node:http2';
+
 
 async function createPost(req, res) {
 	const { title, blogPost } = req.body;
@@ -81,8 +82,11 @@ const { postId } = req.params;
 				blogPost,
             }
         })
-        if (!post || post.authorId !== req.user.id) {
+        if (!post ) {
             return res.status(403).json({error:"not allowed"})
+        }
+         if (post.authorId !== req.user.id) {
+            return res.status(403).json({error:"You're not the author!"})
         }
         return res.json(post)
 
@@ -174,10 +178,38 @@ async function deletePost(req, res) {
     } catch (err) {
         console.log(err)
         return res.json({
-            message: 'Unable to unpublish post'
+            message: 'Unable to delete post'
         })
     }
 
 }
 
-export { createPost, getPosts, getAllUserPost, editPost, publishPost, draftPost, deletePost };
+async function getSinglePost(req, res) {
+    const{ postId} = req.params
+try {
+    const post = await prisma.blogPost.findUnique({
+        where: { id: postId} 
+    })
+    const comments = await prisma.comments.findMany({
+        where: {blogPost:  { id: postId} }
+    })
+
+    if (post.length === 0) { return res.json({message:"No post available"})}
+
+    if (comments.length === 0 ) {return res.json(post)}
+    res.json({
+        post,
+        comments
+    });
+    
+} catch (err) {
+    console.log(err)
+    return res.json({
+        message:"Unable to do that"
+    })
+}
+    
+}
+
+
+export { createPost, getPosts, getAllUserPost, editPost, publishPost, draftPost, deletePost, getSinglePost };

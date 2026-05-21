@@ -5,10 +5,10 @@ import * as blogController from '../controllers/blogController.js'
 
 import verifyToken from '../middleware/verify.js';
 
-
+blogRouter.get('/', blogController.getPosts);
 blogRouter.post('/create-post', verifyToken, blogController.createPost)
 
-blogRouter.get('/', blogController.getPosts);
+blogRouter.get('/post/:postId', blogController.getSinglePost)
 
 blogRouter.get('/posts', verifyToken, blogController.getAllUserPost)
 
