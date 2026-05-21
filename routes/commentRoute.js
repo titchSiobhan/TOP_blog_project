@@ -7,9 +7,9 @@ import verifyToken from '../middleware/verify.js';
 
 commentRouter.post('/:postId/add-comment', verifyToken, commentController.addComment);
 
-commentRouter.put('/edit/:postId/:commentId', verifyToken, commentController.editComment)
+commentRouter.put('/:postId/:commentId/edit', verifyToken, commentController.editComment)
 
-commentRouter.delete('/delete/:postId/:commentId', verifyToken, commentController.deleteComment)
+commentRouter.delete('/delete/:postId/:commentId/delete', verifyToken, commentController.deleteComment)
 
 commentRouter.get('/:postId', commentController.getComments)
 

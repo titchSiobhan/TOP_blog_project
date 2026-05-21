@@ -6,12 +6,17 @@ configDotenv()
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
+import cors from "cors";
 import authRouter from './routes/authRouter.js';
 import blogRouter from './routes/blogRouter.js';
 import commentRouter from './routes/commentRoute.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
+app.use(cors({
+  origin: "*"
+}));
+
 app.use(express.json());
 
 app.use('/', authRouter)

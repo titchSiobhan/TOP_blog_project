@@ -12,10 +12,10 @@ blogRouter.get('/post/:postId', blogController.getSinglePost)
 
 blogRouter.get('/posts', verifyToken, blogController.getAllUserPost)
 
-blogRouter.put('/edit/:postId', verifyToken, blogController.editPost)
+blogRouter.put('/:postId/edit', verifyToken, blogController.editPost)
 
-blogRouter.put('/publish/:postId', verifyToken, blogController.publishPost);
-blogRouter.put('/draft/:postId', verifyToken, blogController.draftPost);
-blogRouter.delete('/delete/:postId', verifyToken, blogController.deletePost)
+blogRouter.put('/:postId/publish', verifyToken, blogController.publishPost);
+blogRouter.put('/:postId/draft', verifyToken, blogController.draftPost);
+blogRouter.delete('/:postId/delete', verifyToken, blogController.deletePost)
 
 export default blogRouter
