@@ -43,9 +43,7 @@ async function getPosts(req, res) {
 		return res.json(posts);
 	} catch (err) {
 		console.log(err);
-		res.json({
-			message: 'No posts avaliable',
-		});
+		res.json([]);
 	}
 }
 

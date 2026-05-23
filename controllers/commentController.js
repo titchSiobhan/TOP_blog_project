@@ -42,7 +42,7 @@ const {comment} = req.body
             }
         })
         if (!comments) {
-            return res.json("No comment found")
+            return res.json([])
         }
         if (comments.authorId !== req.user.id) {
             return res.status(403).json({error:"You're not the author!"})
@@ -98,9 +98,7 @@ async function getComments(req, res) {
         res.status(201).json(comments)
     } catch (err) {
         console.log(err);
-		res.json({
-			message: "Can't get comments",
-		});
+		res.json([]);
     }
 }
 
