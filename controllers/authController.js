@@ -4,23 +4,23 @@ import jwt from 'jsonwebtoken';
 import prisma from  '../lib/prisma.js'
 
 async function signUp(req, res) {
+    try{
     const { userEmail, username, firstName, lastName, password, confirmPassword} = req.body;
   
     if (password !== confirmPassword) {
-        res.json({
-            message: "Passwords don't match"
-        });
-    }
+       return res.status(400).json({ message: "Passwords don't match" });
 
+    }
+    
     const existing = await prisma.user.findUnique({
         where: {userEmail}
     })
 
     if (existing) {
-        res.json({
-            message: "Email already in use"
-        })
+        return res.status(409).json({ message: "Email already in use" });
     }
+
+    
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const id = uuidv4()
@@ -40,6 +40,10 @@ async function signUp(req, res) {
         message: 'User created',
         user
     })
+} catch (err){
+ console.log(err);
+ return res.status(500).json({error:"Signup failed", details: err.message})
+}
 }
 
 async function login(req, res) {
