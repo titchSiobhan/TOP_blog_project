@@ -21,7 +21,7 @@ authRouter.get('/me', verifyToken, async (req, res) => {
       }
     });
     console.log('Decoded user: ', req.user)
-    res.json(user);
+    res.json({user});
   } catch (err) {
     res.status(500).json({ error: "Failed to load user" });
   }
