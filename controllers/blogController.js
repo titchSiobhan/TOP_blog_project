@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma.js';
 import { connect } from 'node:http2';
 
-
 async function createPost(req, res) {
 	const { title, blogPost } = req.body;
 	const id = uuid4();
@@ -17,7 +16,6 @@ async function createPost(req, res) {
 				author: {
 					connect: { id: req.user.id },
 				},
-				
 			},
 		});
 		console.log(post);
@@ -34,6 +32,13 @@ async function getPosts(req, res) {
 	try {
 		const posts = await prisma.blogPost.findMany({
 			where: { isPublished: true },
+			include: {
+				author: {
+					select: {
+						username: true,
+					},
+				},
+			},
 		});
 		return res.json(posts);
 	} catch (err) {
@@ -51,165 +56,157 @@ async function getAllUserPost(req, res) {
 				authorId: req.user.id,
 			},
 		});
-        if (posts.length === 0) {
-            
-            res.json({
-                message: "There are no posts yet!"})
-        } else{
-            
-		res.json(posts);
-    }
+		
+		return	res.json(posts);
+		
 	} catch (err) {
 		console.log(err);
-		res.json({
-			message: 'No posts avaliable',
-		});
+		res.json([]);
 	}
 }
 
 async function editPost(req, res) {
-     const { title, blogPost } = req.body;
-const { postId } = req.params;
+	const { title, blogPost } = req.body;
+	const { postId } = req.params;
 
-    try {
-        const post = await prisma.blogPost.update({
-            where: {
-                
-                id: postId
-            },
-            data: {
-                title,
+	try {
+		const post = await prisma.blogPost.update({
+			where: {
+				id: postId,
+			},
+			data: {
+				title,
 				blogPost,
-            }
-        })
-        if (!post ) {
-            return res.status(403).json({error:"not allowed"})
-        }
-         if (post.authorId !== req.user.id) {
-            return res.status(403).json({error:"You're not the author!"})
-        }
-        return res.json(post)
-
-    } catch (err) {
-        console.log(err)
-        return res.json({
-            message: 'Unable to edit post'
-        })
-    }
+			},
+		});
+		if (!post) {
+			return res.status(403).json({ error: 'not allowed' });
+		}
+		if (post.authorId !== req.user.id) {
+			return res.status(403).json({ error: "You're not the author!" });
+		}
+		return res.json(post);
+	} catch (err) {
+		console.log(err);
+		return res.json({
+			message: 'Unable to edit post',
+		});
+	}
 }
 
-
 async function publishPost(req, res) {
-const { postId } = req.params;
+	const { postId } = req.params;
 
-    try {
-        const post = await prisma.blogPost.update({
-            where: {
-                id: postId
-            },
-            data: {
-                isPublished: true
-            }
-        })
-         if (!post ) {
-            return res.status(403).json({error:"not allowed"})
-        }
-         if (post.authorId !== req.user.id) {
-            return res.status(403).json({error:"You're not the author!"})
-        }
-        return res.json(post)
-
-    } catch (err) {
-        console.log(err)
-        return res.json({
-            message: 'Unable to publish post'
-        })
-    }
+	try {
+		const post = await prisma.blogPost.update({
+			where: {
+				id: postId,
+			},
+			data: {
+				isPublished: true,
+			},
+		});
+		if (!post) {
+			return res.status(403).json({ error: 'not allowed' });
+		}
+		if (post.authorId !== req.user.id) {
+			return res.status(403).json({ error: "You're not the author!" });
+		}
+		return res.json(post);
+	} catch (err) {
+		console.log(err);
+		return res.json({
+			message: 'Unable to publish post',
+		});
+	}
 }
 
 async function draftPost(req, res) {
-const { postId } = req.params;
+	const { postId } = req.params;
 
-    try {
-        const post = await prisma.blogPost.update({
-            where: {
-                id: postId
-            },
-            data: {
-                isPublished: false
-            }
-        })
-         if (!post ) {
-            return res.status(403).json({error:"not allowed"})
-        }
-         if (post.authorId !== req.user.id) {
-            return res.status(403).json({error:"You're not the author!"})
-        }
-        return res.json(post)
-
-    } catch (err) {
-        console.log(err)
-        return res.json({
-            message: 'Unable to unpublish post'
-        })
-    }
+	try {
+		const post = await prisma.blogPost.update({
+			where: {
+				id: postId,
+			},
+			data: {
+				isPublished: false,
+			},
+		});
+		if (!post) {
+			return res.status(403).json({ error: 'not allowed' });
+		}
+		if (post.authorId !== req.user.id) {
+			return res.status(403).json({ error: "You're not the author!" });
+		}
+		return res.json(post);
+	} catch (err) {
+		console.log(err);
+		return res.json({
+			message: 'Unable to unpublish post',
+		});
+	}
 }
 
 async function deletePost(req, res) {
-    const { postId } = req.params;
+	const { postId } = req.params;
 
-    try {
-        const post = await prisma.blogPost.delete({
-            where: {
-                id: postId
-            },
-            
-        })
-        if (!post ) {
-            return res.status(403).json({error:"not allowed"})
-        }
-         if (post.authorId !== req.user.id) {
-            return res.status(403).json({error:"You're not the author!"})
-        }
-        return res.json({
-            message: "Post Deleted"
-        })
-
-    } catch (err) {
-        console.log(err)
-        return res.json({
-            message: 'Unable to delete post'
-        })
-    }
-
+	try {
+		const post = await prisma.blogPost.delete({
+			where: {
+				id: postId,
+			},
+		});
+		if (!post) {
+			return res.status(403).json({ error: 'not allowed' });
+		}
+		if (post.authorId !== req.user.id) {
+			return res.status(403).json({ error: "You're not the author!" });
+		}
+		return res.json({
+			message: 'Post Deleted',
+		});
+	} catch (err) {
+		console.log(err);
+		return res.json({
+			message: 'Unable to delete post',
+		});
+	}
 }
 
 async function getSinglePost(req, res) {
-    const{ postId} = req.params
-try {
-    const post = await prisma.blogPost.findUnique({
-        where: { id: postId} 
-    })
-    const comments = await prisma.comments.findMany({
-        where: {blogPost:  { id: postId} }
-    })
+	const { postId } = req.params;
+	try {
+		const post = await prisma.blogPost.findUnique({
+			where: { id: postId },
+			include: {
+				author: true,
+				comments: {
+					include: {
+						author: true,
+					},
+				},
+			},
+		});
+		return res.json({ post: post || null})
 
-    if (post.length === 0) { return res.json({message:"No post available"})}
-
-    if (comments.length === 0 ) {return res.json(post)}
-    res.json({
-        post,
-        comments
-    });
-    
-} catch (err) {
-    console.log(err)
-    return res.json({
-        message:"Unable to do that"
-    })
+		
+		
+	} catch (err) {
+		console.log(err);
+		return res.json({
+			post: null
+		});
+	}
 }
-    
-}
 
-
-export { createPost, getPosts, getAllUserPost, editPost, publishPost, draftPost, deletePost, getSinglePost };
+export {
+	createPost,
+	getPosts,
+	getAllUserPost,
+	editPost,
+	publishPost,
+	draftPost,
+	deletePost,
+	getSinglePost,
+};

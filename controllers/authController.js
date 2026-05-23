@@ -46,18 +46,18 @@ async function login(req, res) {
     const { userEmail, password }  =  req.body 
 
     const user = await prisma.user.findUnique({
-        where: {userEmail}
+        where: { userEmail }
     })
 
     if (!user) {
-        res.json({
+        return res.json({
             error: 'Incorrect email'
         })
     }
     const match = await bcrypt.compare(password, user.password)
 
     if (!match) {
-        res.json({
+        return res.json({
             error: "Password incorrect"
         })
     }
@@ -70,10 +70,10 @@ async function login(req, res) {
             }
         },
             process.env.JWT_SECRET,
-             {expiresIn: '1hr'}
+             {expiresIn: '3hr'}
     );
     res.json({
-        message: user.firstName,
+        user,
         token
     })
 }

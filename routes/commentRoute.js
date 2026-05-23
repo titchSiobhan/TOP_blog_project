@@ -5,13 +5,13 @@ import * as commentController from '../controllers/commentController.js'
 
 import verifyToken from '../middleware/verify.js';
 
-commentRouter.post('/:postId/add-comment', verifyToken, commentController.addComment);
+commentRouter.post('/comment/:postId/add-comment', verifyToken, commentController.addComment);
 
-commentRouter.put('/:postId/:commentId/edit', verifyToken, commentController.editComment)
+commentRouter.put('/comment/:postId/:commentId/edit', verifyToken, commentController.editComment)
 
-commentRouter.delete('/delete/:postId/:commentId/delete', verifyToken, commentController.deleteComment)
+commentRouter.delete('/comment/:postId/:commentId/delete', verifyToken, commentController.deleteComment)
 
-commentRouter.get('/:postId', commentController.getComments)
+commentRouter.get('/comment/:postId', commentController.getComments)
 
 
 export default commentRouter
